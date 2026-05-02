@@ -1,3 +1,5 @@
+const data = require("./data/data.json"); // ✅ FIX ADDED
+
 const { getMetrics } = require("./metrics");
 const { generateInsights } = require("./insights");
 const { generateNarrative } = require("./ai");
@@ -10,8 +12,15 @@ async function getDeveloperReport(developerId, month, previousMonth = null) {
 
     const { insights, actions } = generateInsights(currentMetrics, previousMetrics);
 
+    const developer = data.developers.find(d => d.developer_id === developerId);
+
     // Try AI (optional)
-    const aiSummary = await generateNarrative(currentMetrics, insights, actions);
+    const aiSummary = await generateNarrative(
+        currentMetrics,
+        insights,
+        actions,
+        developer?.name || developerId
+    );
 
     return {
         metrics: currentMetrics,

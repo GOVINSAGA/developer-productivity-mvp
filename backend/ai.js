@@ -1,8 +1,6 @@
-
-
 const axios = require("axios");
 
-async function generateNarrative(metrics, insights, actions) {
+async function generateNarrative(metrics, insights, actions, developerName = "Developer") {
     const apiKey = process.env.NVIDIA_API_KEY;
 
     // Fallback if no key
@@ -10,33 +8,43 @@ async function generateNarrative(metrics, insights, actions) {
 
     try {
         const prompt = `
-You are an engineering manager.
+You are an engineering manager giving feedback to a developer.
+
+Developer: ${developerName}
 
 Metrics:
-${JSON.stringify(metrics, null, 2)}
+- Lead Time: ${metrics.leadTime} days
+- Cycle Time: ${metrics.cycleTime} days
+- Bug Rate: ${metrics.bugRate}
+- Deployment Frequency: ${metrics.deploymentFrequency}
+- PR Throughput: ${metrics.prThroughput}
 
 Insights:
-${insights.join("\n")}
+${insights.map(i => `- ${i}`).join("\n")}
 
 Actions:
-${actions.join("\n")}
+${actions.map(a => `- ${a}`).join("\n")}
 
-Write a short, professional summary (2-3 sentences).
+Write a short, clear 2–3 sentence summary.
+- Address the developer directly
+- Mention any important change (like lead time increase)
+- Be concise and actionable
+- Do NOT include reasoning or instructions
 `;
 
         const response = await axios.post(
             "https://integrate.api.nvidia.com/v1/chat/completions",
             {
-                model: "nvidia/nemotron-3-super-120b-a12b", // ✅ REQUIRED
+                model: "nvidia/nemotron-3-super-120b-a12b",
                 messages: [
                     {
                         role: "user",
                         content: prompt
                     }
                 ],
-                temperature: 0.7,
+                temperature: 0.4,   // 🔥 reduced for more deterministic output
                 top_p: 0.9,
-                max_tokens: 200
+                max_tokens: 150
             },
             {
                 headers: {
@@ -46,11 +54,13 @@ Write a short, professional summary (2-3 sentences).
             }
         );
 
-        return response.data.choices[0].message.content;
+        const content = response?.data?.choices?.[0]?.message?.content?.trim();
+
+        return content || null;
 
     } catch (err) {
         console.error("AI error:", err.response?.data || err.message);
-        return null; // fallback
+        return null; // graceful fallback
     }
 }
 

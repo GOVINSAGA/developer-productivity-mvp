@@ -66,6 +66,16 @@ app.get("/report", async (req, res) => {
 });
 
 
+app.get("/months", (req, res) => {
+    const months = new Set();
+
+    data.issues.forEach(i => i.month_done && months.add(i.month_done));
+    data.pullRequests.forEach(p => p.month_merged && months.add(p.month_merged));
+    data.deployments.forEach(d => d.month_deployed && months.add(d.month_deployed));
+
+    res.json(Array.from(months).sort());
+});
+
 // ===== START SERVER =====
 app.listen(PORT, () => {
     console.log(`🔥 Server running on http://localhost:${PORT}`);

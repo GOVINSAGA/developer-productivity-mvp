@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { getDevelopers, getReport } from "../api";
+import { getDevelopers, getReport,getMonths } from "../api";
 import MetricsCard from "./MetricsCard";
 import Controls from "./Controls";
 
 function Dashboard() {
     const [developers, setDevelopers] = useState([]);
     const [selectedDev, setSelectedDev] = useState("");
-    const [month, setMonth] = useState("2026-04");
+    const [month, setMonth] = useState([]);
+    const [months, setMonths] = useState([]);
     const [report, setReport] = useState(null);
 
     useEffect(() => {
         getDevelopers().then(res => setDevelopers(res.data));
+        getMonths().then(res => setMonths(res.data));
     }, []);
 
     const fetchReport = async () => {
@@ -28,6 +30,7 @@ function Dashboard() {
 
             <Controls
                 developers={developers}
+                months={months}
                 selectedDev={selectedDev}
                 setSelectedDev={setSelectedDev}
                 month={month}

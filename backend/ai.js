@@ -1,5 +1,25 @@
 const axios = require("axios");
 
+// 🔒 Guardrail to filter bad AI outputs
+function cleanAIOutput(text) {
+    if (!text) return null;
+
+    const badPatterns = [
+        "We need to",
+        "The prompt says",
+        "We should",
+        "So we can say",
+        "Ensure",
+        "This means"
+    ];
+
+    const isBad = badPatterns.some(p => text.includes(p));
+
+    if (isBad) return null;
+
+    return text.trim();
+}
+
 async function generateNarrative(metrics, insights, actions, developerName = "Developer") {
     const apiKey = process.env.NVIDIA_API_KEY;
 
@@ -42,9 +62,9 @@ Write a short, clear 2–3 sentence summary.
                         content: prompt
                     }
                 ],
-                temperature: 0.4,   // 🔥 reduced for more deterministic output
+                temperature: 0.4,
                 top_p: 0.9,
-                max_tokens: 150
+                max_tokens: 180   // 🔥 slightly increased to avoid truncation
             },
             {
                 headers: {
@@ -56,7 +76,8 @@ Write a short, clear 2–3 sentence summary.
 
         const content = response?.data?.choices?.[0]?.message?.content?.trim();
 
-        return content || null;
+        // 🔒 Apply cleaning
+        return cleanAIOutput(content);
 
     } catch (err) {
         console.error("AI error:", err.response?.data || err.message);

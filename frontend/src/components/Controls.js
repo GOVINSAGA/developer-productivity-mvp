@@ -1,6 +1,6 @@
 import React from "react";
 
-function Controls({ developers, selectedDev, setSelectedDev, month, setMonth }) {
+function Controls({ developers, selectedDev, setSelectedDev, month, setMonth, months }) {
     return (
         <div style={{ marginBottom: "20px" }}>
 
@@ -13,12 +13,19 @@ function Controls({ developers, selectedDev, setSelectedDev, month, setMonth }) 
                 ))}
             </select>
 
-            <input
-                type="month"
+            <select
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}
                 style={{ marginLeft: "10px" }}
-            />
+            >
+                <option value="">Select Month</option>
+                {months.map((m) => (
+                    <option key={m} value={m}>
+                        {m}
+                    </option>
+                ))}
+            </select>
+
         </div>
     );
 }

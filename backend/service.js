@@ -19,7 +19,7 @@ async function getDeveloperReport(developerId, month, previousMonth = null) {
         currentMetrics,
         insights,
         actions,
-        developer?.name || developerId
+        developer?.developer_name?.split(" ")[0] || developerId
     );
 
     return {

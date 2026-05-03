@@ -24,6 +24,19 @@ app.get("/developers", (req, res) => {
     res.json(data.developers);
 });
 
+// ===== GET SINGLE DEVELOPER =====
+app.get("/developers/:id", (req, res) => {
+    const dev = data.developers.find(
+        d => d.developer_id === req.params.id
+    );
+
+    if (!dev) {
+        return res.status(404).json({ error: "Developer not found" });
+    }
+
+    res.json(dev);
+});
+
 
 // ===== GET REPORT =====
 app.get("/report", async (req, res) => {

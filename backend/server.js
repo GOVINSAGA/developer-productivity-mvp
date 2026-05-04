@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 
-const { getDeveloperReport } = require("./service");
+const { getDeveloperReport, getManagerReport } = require("./service");
 const data = require("./data/data.json");
 
 const app = express();
@@ -74,6 +74,26 @@ app.get("/months", (req, res) => {
     data.deployments.forEach(d => d.month_deployed && months.add(d.month_deployed));
 
     res.json(Array.from(months).sort());
+});
+
+
+app.get("/manager-report", (req, res) => {
+    try {
+        const { managerId, month } = req.query;
+
+        if (!managerId || !month) {
+            return res.status(400).json({
+                error: "managerId and month are required"
+            });
+        }
+
+        const report = getManagerReport(managerId, month);
+
+        res.json(report);
+
+    } catch (err) {
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
 
 // ===== START SERVER =====

@@ -112,7 +112,9 @@ function Dashboard() {
                     )}
 
                     <h3>AI Summary</h3>
-                    <p>{report?.summary || ""}</p>
+                    <p>
+                        {report?.summary || "AI summary not available. Showing rule-based insights."}
+                    </p>
                 </div>
             )}
 

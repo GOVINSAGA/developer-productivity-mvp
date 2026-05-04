@@ -44,7 +44,7 @@ function generateInsights(metrics, previousMetrics = null) {
         insights.push("PR throughput is good.");
     }
 
-    // ===== Trend Analysis (IMPORTANT) =====
+    // ===== Trend Analysis =====
     if (previousMetrics) {
         if (leadTime > previousMetrics.leadTime) {
             insights.push("Lead time has increased compared to previous period.");
@@ -54,6 +54,11 @@ function generateInsights(metrics, previousMetrics = null) {
         if (cycleTime > previousMetrics.cycleTime) {
             insights.push("Cycle time has increased compared to previous period.");
         }
+    }
+
+    // 🔥 ✅ IMPORTANT FIX: Always ensure at least 1 action
+    if (actions.length === 0) {
+        actions.push("Maintain current performance and continue monitoring key metrics.");
     }
 
     return { insights, actions };

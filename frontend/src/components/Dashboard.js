@@ -103,9 +103,13 @@ function Dashboard() {
                     </ul>
 
                     <h3>Actions</h3>
-                    <ul>
-                        {(report?.actions || []).map((a, idx) => <li key={idx}>{a}</li>)}
-                    </ul>
+                    {(report?.actions || []).length > 0 ? (
+                        <ul>
+                            {report.actions.map((a, idx) => <li key={idx}>{a}</li>)}
+                        </ul>
+                    ) : (
+                        <p>No actions needed. Performance looks good.</p>
+                    )}
 
                     <h3>AI Summary</h3>
                     <p>{report?.summary || ""}</p>
